@@ -1,3 +1,7 @@
-Resolution,Average_FPS,Average_Latency_ms,Observation
-640x640,7.6,110.0,Higher detection quality
-416x416,14.2,65.0,Faster Inference
+Category,Parameter,Average_FPS,Average_Latency_ms,Observation
+Resolution,640x640,7.50,129.21,Baseline - Higher detection quality
+Resolution,416x416,8.68,113.47,Moderate speedup on CPU
+Model Size,YOLOv8n,8.93,108.22,Best for edge devices
+Model Size,YOLOv8s,3.71,265.91,Significant latency increase
+Precision,FP32,7.66,126.59,Standard precision
+Precision,FP16,0.14,7378.17,Extremely slow on CPU (unsupported/emulated)
