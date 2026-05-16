@@ -3,3 +3,11 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Models
+*.pt
+
+# Results
+results/tables/resolution_*_results.csv
+results/tables/model_*_results.csv
+results/tables/precision_*_results.csv
