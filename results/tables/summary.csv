@@ -1,3 +1,7 @@
-Resolution,Average_FPS,Average_Latency_ms,Observation
-640x640,7.6,110.0,Higher detection quality
-416x416,14.2,65.0,Faster Inference
+Category,Variant,Average_FPS,Average_Latency_ms,Observation
+Resolution,640x640,3.15,203.77,Higher detection quality
+Resolution,416x416,5.59,117.49,Faster Inference
+Model_Size,YOLOv8n,5.59,113.83,Highly optimized for edge
+Model_Size,YOLOv8s,2.49,271.92,Better accuracy but higher latency
+Precision,FP32,2.68,131.81,Standard precision
+Precision,FP16,0.05,7218.25,Extremely slow on CPU (requires CUDA/NPU)
