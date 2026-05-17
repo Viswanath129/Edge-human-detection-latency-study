@@ -1,60 +1,88 @@
 import cv2
 import time
 import pandas as pd
+import numpy as np
+import os
 from ultralytics import YOLO
 
-# Load model
-model = YOLO("yolov8n.pt")  # nano = fast (good for edge)
+def run_benchmark(input_size=640, num_frames=500, use_webcam=True):
+    # Load model
+    model = YOLO("yolov8n.pt")
 
-# Open webcam
-cap = cv2.VideoCapture(0)
+    # Try to open webcam if requested
+    cap = None
+    if use_webcam:
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            print("Webcam not available. Falling back to synthetic frames.")
+            cap = None
 
-latencies = []
-frame_count = 0
-start_time = time.time()
+    latencies = []
+    frame_count = 0
 
-INPUT_SIZE = 640  # change later to 416
+    print(f"Starting benchmark for resolution {input_size}x{input_size}...")
 
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
+    start_time = time.time()
 
-    t0 = time.time()
+    for i in range(num_frames):
+        if cap:
+            ret, frame = cap.read()
+            if not ret:
+                break
+        else:
+            # Generate synthetic frame
+            frame = np.random.randint(0, 255, (input_size, input_size, 3), dtype=np.uint8)
 
-    # Resize frame
-    frame_resized = cv2.resize(frame, (INPUT_SIZE, INPUT_SIZE))
+        t0 = time.time()
 
-    # Run inference
-    results = model(frame_resized, conf=0.4, iou=0.5, verbose=False)
+        # Resize frame
+        frame_resized = cv2.resize(frame, (input_size, input_size))
 
-    t1 = time.time()
-    latency = (t1 - t0) * 1000  # ms
-    latencies.append(latency)
+        # Run inference
+        results = model(frame_resized, conf=0.4, iou=0.5, verbose=False)
 
-    frame_count += 1
+        t1 = time.time()
+        latency = (t1 - t0) * 1000  # ms
 
-    # Display (optional)
-    annotated = results[0].plot()
-    cv2.imshow("Human Detection", annotated)
+        # Skip first few frames for warmup
+        if i > 5:
+            latencies.append(latency)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+        frame_count += 1
 
-cap.release()
-cv2.destroyAllWindows()
+        # Display (optional - disabled by default for benchmarking)
+        if os.environ.get('DISPLAY') and use_webcam:
+            annotated = results[0].plot()
+            cv2.imshow("Human Detection", annotated)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
-end_time = time.time()
+    if cap:
+        cap.release()
+        cv2.destroyAllWindows()
 
-# Metrics
-avg_latency = sum(latencies) / len(latencies)
-fps = frame_count / (end_time - start_time)
+    end_time = time.time()
 
-print(f"Avg Latency: {avg_latency:.2f} ms")
-print(f"FPS: {fps:.2f}")
+    # Metrics
+    if not latencies:
+        return 0, 0
 
-# Save results
-df = pd.DataFrame({
-    "latency_ms": latencies
-})
-df.to_csv("results/tables/resolution_{}_results.csv".format(INPUT_SIZE), index=False)
+    avg_latency = sum(latencies) / len(latencies)
+    fps = (frame_count - 6) / (end_time - start_time) if frame_count > 6 else frame_count / (end_time - start_time)
+
+    print(f"Resolution: {input_size}x{input_size}")
+    print(f"Avg Latency: {avg_latency:.2f} ms")
+    print(f"FPS: {fps:.2f}")
+
+    # Save results
+    os.makedirs("results/tables", exist_ok=True)
+    df = pd.DataFrame({
+        "latency_ms": latencies
+    })
+    df.to_csv(f"results/tables/resolution_{input_size}_results.csv", index=False)
+
+    return avg_latency, fps
+
+if __name__ == "__main__":
+    for size in [640, 416]:
+        run_benchmark(input_size=size, num_frames=50)

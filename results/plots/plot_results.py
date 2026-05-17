@@ -8,26 +8,33 @@ df = pd.read_csv('../tables/summary.csv')
 # Create plots directory if it doesn't exist
 os.makedirs('.', exist_ok=True)
 
-# Plot 1: Average Latency vs Resolution
-plt.figure(figsize=(8, 5))
-plt.bar(df['Resolution'], df['Average_Latency_ms'], color=['salmon', 'lightblue'])
-plt.title('Average Latency vs Input Resolution')
-plt.xlabel('Input Resolution')
-plt.ylabel('Average Latency (ms)')
-for i, v in enumerate(df['Average_Latency_ms']):
-    plt.text(i, v + 2, str(v), ha='center')
-plt.savefig('latency_vs_resolution.png')
-plt.close()
+def plot_metric(df_subset, category, metric, title, filename, color):
+    plt.figure(figsize=(10, 6))
+    bars = plt.bar(df_subset['Variant'], df_subset[metric], color=color)
+    plt.title(f'{title} for {category}')
+    plt.xlabel('Variant')
+    plt.ylabel(metric.replace('_', ' '))
 
-# Plot 2: Average FPS vs Resolution
-plt.figure(figsize=(8, 5))
-plt.bar(df['Resolution'], df['Average_FPS'], color=['lightgreen', 'orange'])
-plt.title('Average FPS vs Input Resolution')
-plt.xlabel('Input Resolution')
-plt.ylabel('Average FPS (Frames/Sec)')
-for i, v in enumerate(df['Average_FPS']):
-    plt.text(i, v + 0.5, str(v), ha='center')
-plt.savefig('fps_vs_resolution.png')
-plt.close()
+    for bar in bars:
+        yval = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2, yval, f'{yval:.2f}', va='bottom', ha='center')
+
+    plt.tight_layout()
+    plt.savefig(filename)
+    plt.close()
+
+# Plot for each category
+categories = df['Category'].unique()
+colors_fps = ['lightgreen', 'orange', 'cyan']
+colors_latency = ['salmon', 'lightblue', 'plum']
+
+for i, cat in enumerate(categories):
+    df_cat = df[df['Category'] == cat]
+
+    # FPS Plot
+    plot_metric(df_cat, cat, 'Average_FPS', 'Average FPS', f'fps_{cat.lower()}.png', colors_fps[i % 3])
+
+    # Latency Plot
+    plot_metric(df_cat, cat, 'Average_Latency_ms', 'Average Latency (ms)', f'latency_{cat.lower()}.png', colors_latency[i % 3])
 
 print('Plots saved successfully in results/plots')
