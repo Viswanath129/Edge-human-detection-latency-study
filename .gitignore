@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+*.pt
+results/tables/*_raw.csv
+results/tables/*_summary.csv
+experiments/results/
