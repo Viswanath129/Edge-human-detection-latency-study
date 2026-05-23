@@ -1,3 +1,5 @@
-Resolution,Average_FPS,Average_Latency_ms,Observation
-640x640,7.6,110.0,Higher detection quality
-416x416,14.2,65.0,Faster Inference
+Resolution,Model,Precision,Average_FPS,Average_Latency_ms,Observation
+640x640,yolov8n,FP32,9.48,105.51,Base resolution
+416x416,yolov8n,FP32,9.17,108.99,Lower resolution for speed
+640x640,yolov8n,FP16,0.14,7393.63,Half precision (CPU)
+640x640,yolov8s,FP32,4.29,233.16,Small model
