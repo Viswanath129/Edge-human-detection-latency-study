@@ -1,60 +1,31 @@
-import cv2
-import time
-import pandas as pd
-from ultralytics import YOLO
+from utils import run_benchmark, save_summary
 
-# Load model
-model = YOLO("yolov8n.pt")  # nano = fast (good for edge)
+def main():
+    results = []
 
-# Open webcam
-cap = cv2.VideoCapture(0)
+    # 640
+    res_640 = run_benchmark("yolov8n.pt", imgsz=640, num_frames=10)
+    results.append({
+        "Resolution": "640x640",
+        "Model": "YOLOv8n",
+        "Precision": "FP32",
+        "Average_FPS": round(res_640["fps"], 2),
+        "Average_Latency_ms": round(res_640["avg_latency_ms"], 2),
+        "Observation": "Standard resolution"
+    })
 
-latencies = []
-frame_count = 0
-start_time = time.time()
+    # 416
+    res_416 = run_benchmark("yolov8n.pt", imgsz=416, num_frames=10)
+    results.append({
+        "Resolution": "416x416",
+        "Model": "YOLOv8n",
+        "Precision": "FP32",
+        "Average_FPS": round(res_416["fps"], 2),
+        "Average_Latency_ms": round(res_416["avg_latency_ms"], 2),
+        "Observation": "Reduced latency"
+    })
 
-INPUT_SIZE = 640  # change later to 416
+    save_summary(results)
 
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
-
-    t0 = time.time()
-
-    # Resize frame
-    frame_resized = cv2.resize(frame, (INPUT_SIZE, INPUT_SIZE))
-
-    # Run inference
-    results = model(frame_resized, conf=0.4, iou=0.5, verbose=False)
-
-    t1 = time.time()
-    latency = (t1 - t0) * 1000  # ms
-    latencies.append(latency)
-
-    frame_count += 1
-
-    # Display (optional)
-    annotated = results[0].plot()
-    cv2.imshow("Human Detection", annotated)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
-
-end_time = time.time()
-
-# Metrics
-avg_latency = sum(latencies) / len(latencies)
-fps = frame_count / (end_time - start_time)
-
-print(f"Avg Latency: {avg_latency:.2f} ms")
-print(f"FPS: {fps:.2f}")
-
-# Save results
-df = pd.DataFrame({
-    "latency_ms": latencies
-})
-df.to_csv("results/tables/resolution_{}_results.csv".format(INPUT_SIZE), index=False)
+if __name__ == "__main__":
+    main()
