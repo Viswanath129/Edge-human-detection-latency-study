@@ -1,3 +1,7 @@
-Resolution,Average_FPS,Average_Latency_ms,Observation
-640x640,7.6,110.0,Higher detection quality
-416x416,14.2,65.0,Faster Inference
+Resolution,Model,Precision,Average_FPS,Average_Latency_ms,Observation
+640x640,yolov8n,FP32,8.32,116.31,Baseline high resolution
+416x416,yolov8n,FP32,18.02,53.77,"Faster inference, reduced detail"
+640x640,yolov8n,FP32,8.09,119.74,Standard precision
+640x640,yolov8n,FP16,0.14,7250.78,Half precision (optimized for GPU)
+640x640,yolov8n,FP32,8.16,118.54,Nano model - fastest
+640x640,yolov8s,FP32,3.79,260.27,Small model - better accuracy
