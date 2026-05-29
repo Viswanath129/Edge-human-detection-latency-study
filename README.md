@@ -2,30 +2,35 @@
 This project studies the latency–accuracy trade-offs of real-time human detection models deployed on edge devices.
 
 ## Research Question
-How do input resolution and model configuration affect inference latency and detection accuracy under edge compute constraints?
+How do input resolution, model configuration, and precision affect inference latency and detection accuracy under edge compute constraints?
 
 ## Methodology
-We implement a real-time YOLO-based human detection pipeline and benchmark FPS and per-frame latency during live video inference.
+We implement a real-time YOLO-based human detection pipeline and benchmark FPS and per-frame latency. The suite supports synthetic frame generation for headless environments.
 
-## Experiments
-- Resolution comparison (640×640 vs 416×416)
+## Core Experiments
+- **Resolution comparison**: 640×640 vs 416×416
+- **Model size comparison**: YOLOv8n (Nano) vs YOLOv8s (Small)
+- **Precision analysis**: FP32 vs FP16
 
-## Preliminary Results
-| Resolution | FPS | Avg Latency (ms) | Notes |
-|------------|-----|------------------|-------|
-| 640        | 7.6  | 110.0               | Higher accuracy |
-| 416        | 14.2  | 65.0               | Faster inference |
+## Key Results
+| Configuration | Resolution | FPS | Avg Latency (ms) |
+|---------------|------------|-----|------------------|
+| YOLOv8n (FP32)| 640x640    | 9.45| 105.85           |
+| YOLOv8n (FP32)| 416x416    | 20.83| 48.01           |
+| YOLOv8s (FP32)| 640x640    | 4.26| 234.86           |
 
 ## Observations
-- Lower input resolution significantly improves inference latency.
-- Accuracy degradation is moderate for human detection tasks.
+- **Resolution**: Lowering resolution to 416x416 doubles the FPS on CPU.
+- **Model Size**: YOLOv8n is significantly more viable for real-time edge use cases than YOLOv8s.
+- **Hardware**: FP16 benchmarking shows that CPU-only environments should stick to FP32.
 
-## Limitations
-- Limited dataset size
-- Approximate accuracy estimation
-- Single-device benchmarking
+## Visualizations
+Results plots are available in `results/plots/`, including:
+- `fps_vs_resolution.png`
+- `latency_vs_model.png`
+- `fps_vs_precision.png`
 
-## Future Work
-- Precision-aware inference (FP16 / INT8)
-- Edge NPU benchmarking
-- Model size comparison
+## Reproducing Results
+1. Install dependencies: `pip install -r requirements.txt`
+2. Run all tests: `python3 experiments/run_all.py`
+3. Generate plots: `cd results/plots && python3 plot_results.py`

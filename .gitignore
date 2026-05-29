@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+*.pt
+results/tables/*.csv
+results/plots/*.png
