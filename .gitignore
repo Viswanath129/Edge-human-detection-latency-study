@@ -3,3 +3,13 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Model weights
+*.pt
+
+# Benchmark artifacts
+results/tables/*.csv
+results/plots/*.png
+
+# Ignore research data
+results/tables/resolution_*_results.csv

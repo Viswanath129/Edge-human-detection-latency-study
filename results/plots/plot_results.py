@@ -2,32 +2,57 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-# Load the summary data
-df = pd.read_csv('../tables/summary.csv')
+def plot_results():
+    # Correct path to summary.csv
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    summary_path = os.path.join(base_dir, '../tables/summary.csv')
 
-# Create plots directory if it doesn't exist
-os.makedirs('.', exist_ok=True)
+    if not os.path.exists(summary_path):
+        print(f"Error: {summary_path} not found.")
+        return
 
-# Plot 1: Average Latency vs Resolution
-plt.figure(figsize=(8, 5))
-plt.bar(df['Resolution'], df['Average_Latency_ms'], color=['salmon', 'lightblue'])
-plt.title('Average Latency vs Input Resolution')
-plt.xlabel('Input Resolution')
-plt.ylabel('Average Latency (ms)')
-for i, v in enumerate(df['Average_Latency_ms']):
-    plt.text(i, v + 2, str(v), ha='center')
-plt.savefig('latency_vs_resolution.png')
-plt.close()
+    df = pd.read_csv(summary_path)
 
-# Plot 2: Average FPS vs Resolution
-plt.figure(figsize=(8, 5))
-plt.bar(df['Resolution'], df['Average_FPS'], color=['lightgreen', 'orange'])
-plt.title('Average FPS vs Input Resolution')
-plt.xlabel('Input Resolution')
-plt.ylabel('Average FPS (Frames/Sec)')
-for i, v in enumerate(df['Average_FPS']):
-    plt.text(i, v + 0.5, str(v), ha='center')
-plt.savefig('fps_vs_resolution.png')
-plt.close()
+    # Ensure plots directory exists
+    os.makedirs(base_dir, exist_ok=True)
 
-print('Plots saved successfully in results/plots')
+    # 1. Resolution Comparison (Nano model, FP32)
+    res_df = df[(df['Model'] == 'Nano') & (df['Precision'] == 'FP32')]
+    if not res_df.empty:
+        plt.figure(figsize=(10, 6))
+        plt.bar(res_df['Resolution'], res_df['Average_FPS'], color='skyblue')
+        plt.title('Inference Speed (FPS) vs Resolution (Nano, FP32)')
+        plt.ylabel('FPS')
+        for i, v in enumerate(res_df['Average_FPS']):
+            plt.text(i, v + 0.1, str(v), ha='center')
+        plt.savefig(os.path.join(base_dir, 'fps_vs_resolution.png'))
+        plt.close()
+
+    # 2. Precision Comparison (Nano model, 640x640)
+    prec_df = df[(df['Model'] == 'Nano') & (df['Resolution'] == '640x640')]
+    if not prec_df.empty:
+        plt.figure(figsize=(10, 6))
+        plt.bar(prec_df['Precision'], prec_df['Average_Latency_ms'], color='lightcoral')
+        plt.title('Latency (ms) vs Precision (Nano, 640x640)')
+        plt.ylabel('Latency (ms)')
+        for i, v in enumerate(prec_df['Average_Latency_ms']):
+            plt.text(i, v + 0.5, str(v), ha='center')
+        plt.savefig(os.path.join(base_dir, 'latency_vs_precision.png'))
+        plt.close()
+
+    # 3. Model Size Comparison (640x640, FP32)
+    size_df = df[(df['Resolution'] == '640x640') & (df['Precision'] == 'FP32')]
+    if not size_df.empty:
+        plt.figure(figsize=(10, 6))
+        plt.bar(size_df['Model'], size_df['Average_FPS'], color='lightgreen')
+        plt.title('Inference Speed (FPS) vs Model Variant (640x640, FP32)')
+        plt.ylabel('FPS')
+        for i, v in enumerate(size_df['Average_FPS']):
+            plt.text(i, v + 0.1, str(v), ha='center')
+        plt.savefig(os.path.join(base_dir, 'fps_vs_model_size.png'))
+        plt.close()
+
+    print(f"Plots updated in {base_dir}")
+
+if __name__ == "__main__":
+    plot_results()
