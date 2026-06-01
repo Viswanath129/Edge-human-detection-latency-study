@@ -2,32 +2,54 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-# Load the summary data
-df = pd.read_csv('../tables/summary.csv')
+def generate_plots():
+    # Absolute path to summary.csv
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    summary_path = os.path.join(base_dir, "../tables/summary.csv")
 
-# Create plots directory if it doesn't exist
-os.makedirs('.', exist_ok=True)
+    if not os.path.exists(summary_path):
+        print(f"Summary file not found at {summary_path}")
+        return
 
-# Plot 1: Average Latency vs Resolution
-plt.figure(figsize=(8, 5))
-plt.bar(df['Resolution'], df['Average_Latency_ms'], color=['salmon', 'lightblue'])
-plt.title('Average Latency vs Input Resolution')
-plt.xlabel('Input Resolution')
-plt.ylabel('Average Latency (ms)')
-for i, v in enumerate(df['Average_Latency_ms']):
-    plt.text(i, v + 2, str(v), ha='center')
-plt.savefig('latency_vs_resolution.png')
-plt.close()
+    df = pd.read_csv(summary_path)
 
-# Plot 2: Average FPS vs Resolution
-plt.figure(figsize=(8, 5))
-plt.bar(df['Resolution'], df['Average_FPS'], color=['lightgreen', 'orange'])
-plt.title('Average FPS vs Input Resolution')
-plt.xlabel('Input Resolution')
-plt.ylabel('Average FPS (Frames/Sec)')
-for i, v in enumerate(df['Average_FPS']):
-    plt.text(i, v + 0.5, str(v), ha='center')
-plt.savefig('fps_vs_resolution.png')
-plt.close()
+    # Plot 1: Resolution Comparison (YOLOv8n, FP32)
+    res_df = df[(df['Model'] == 'YOLOv8n') & (df['Precision'] == 'FP32')]
+    if not res_df.empty:
+        plt.figure(figsize=(8, 5))
+        plt.bar(res_df['Resolution'], res_df['Average_FPS'], color='skyblue')
+        plt.title('FPS vs Resolution (YOLOv8n, FP32)')
+        plt.ylabel('Average FPS')
+        for i, v in enumerate(res_df['Average_FPS']):
+            plt.text(i, v + 0.1, str(v), ha='center')
+        plt.savefig(os.path.join(base_dir, 'fps_vs_resolution.png'))
+        plt.close()
 
-print('Plots saved successfully in results/plots')
+    # Plot 2: Model Size Comparison (640x640, FP32)
+    model_df = df[(df['Resolution'] == '640x640') & (df['Precision'] == 'FP32')]
+    if not model_df.empty:
+        plt.figure(figsize=(8, 5))
+        plt.bar(model_df['Model'], model_df['Average_FPS'], color='lightgreen')
+        plt.title('FPS vs Model Variant (640x640, FP32)')
+        plt.ylabel('Average FPS')
+        for i, v in enumerate(model_df['Average_FPS']):
+            plt.text(i, v + 0.1, str(v), ha='center')
+        plt.savefig(os.path.join(base_dir, 'fps_vs_model.png'))
+        plt.close()
+
+    # Plot 3: Precision Comparison (YOLOv8n, 640x640)
+    prec_df = df[(df['Model'] == 'YOLOv8n') & (df['Resolution'] == '640x640')]
+    if not prec_df.empty:
+        plt.figure(figsize=(8, 5))
+        plt.bar(prec_df['Precision'], prec_df['Average_Latency_ms'], color='salmon')
+        plt.title('Latency vs Precision (YOLOv8n, 640x640)')
+        plt.ylabel('Average Latency (ms)')
+        for i, v in enumerate(prec_df['Average_Latency_ms']):
+            plt.text(i, v + 1, str(v), ha='center')
+        plt.savefig(os.path.join(base_dir, 'latency_vs_precision.png'))
+        plt.close()
+
+    print(f"Plots generated in {base_dir}")
+
+if __name__ == "__main__":
+    generate_plots()
