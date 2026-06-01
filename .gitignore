@@ -3,3 +3,9 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+# Model weights
+*.pt
+# Benchmark results
+results/tables/*.csv
+# Plots
+results/plots/*.png
