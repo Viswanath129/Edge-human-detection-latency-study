@@ -3,3 +3,12 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Project Artifacts
+*.pt
+results/tables/*.csv
+results/plots/*.png
+
+# Keep directory structure but ignore contents
+!results/tables/.gitkeep
+!results/plots/.gitkeep
