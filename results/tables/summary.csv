@@ -1,3 +1,5 @@
-Resolution,Average_FPS,Average_Latency_ms,Observation
-640x640,7.6,110.0,Higher detection quality
-416x416,14.2,65.0,Faster Inference
+Resolution,Model,Precision,Average_FPS,Average_Latency_ms,Observation
+640x640,yolov8n,FP32,9.26,107.97,Standard precision
+416x416,yolov8n,FP32,20.76,48.17,Faster Inference
+640x640,yolov8s,FP32,4.25,235.54,Improved accuracy
+640x640,yolov8n,FP16,0.14,7275.21,Optimized for GPU/NPU
