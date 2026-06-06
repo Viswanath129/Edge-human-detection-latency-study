@@ -3,3 +3,14 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Models
+*.pt
+
+# Results
+results/tables/*.csv
+results/plots/*.png
+
+# Keep directory structure
+!results/tables/.gitkeep
+!results/plots/.gitkeep
