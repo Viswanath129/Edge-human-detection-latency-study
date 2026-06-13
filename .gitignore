@@ -3,3 +3,12 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# ML weights
+*.pt
+
+# Results artifacts
+results/tables/
+results/plots/
+!results/tables/.gitkeep
+!results/plots/.gitkeep
