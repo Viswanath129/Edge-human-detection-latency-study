@@ -7,25 +7,29 @@ How do input resolution and model configuration affect inference latency and det
 ## Methodology
 We implement a real-time YOLO-based human detection pipeline and benchmark FPS and per-frame latency during live video inference.
 
-## Experiments
-- Resolution comparison (640×640 vs 416×416)
-
-## Preliminary Results
-| Resolution | FPS | Avg Latency (ms) | Notes |
-|------------|-----|------------------|-------|
-| 640        | 7.6  | 110.0               | Higher accuracy |
-| 416        | 14.2  | 65.0               | Faster inference |
+## Summary of Results
+| Model | Resolution | Precision | FPS | Avg Latency (ms) |
+|-------|------------|-----------|-----|------------------|
+| YOLOv8n | 416x416 | FP32 | 21.1 | 47.5 |
+| YOLOv8n | 640x640 | FP32 | 9.7 | 102.9 |
+| YOLOv8s | 640x640 | FP32 | 4.4 | 225.9 |
 
 ## Observations
-- Lower input resolution significantly improves inference latency.
-- Accuracy degradation is moderate for human detection tasks.
+- **Resolution**: Reducing resolution to 416x416 more than doubles the FPS for the Nano model.
+- **Model Size**: YOLOv8n is significantly faster than YOLOv8s, making it ideal for low-power edge devices.
+- **Precision**: Hardware acceleration is critical for seeing benefits from FP16 precision.
 
-## Limitations
-- Limited dataset size
-- Approximate accuracy estimation
-- Single-device benchmarking
+## Visualizations
+Generated plots can be found in `results/plots/`:
+- `latency_vs_resolution.png`
+- `fps_vs_resolution.png`
+- `fps_vs_model.png`
+- `latency_precision_comp.png`
+
+## Detailed Analysis
+For a deep dive into the experimental findings, see [report/research_note.md](report/research_note.md).
 
 ## Future Work
-- Precision-aware inference (FP16 / INT8)
 - Edge NPU benchmarking
-- Model size comparison
+- INT8 quantization
+- Multi-object detection performance analysis
