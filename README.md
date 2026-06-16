@@ -5,27 +5,25 @@ This project studies the latency–accuracy trade-offs of real-time human detect
 How do input resolution and model configuration affect inference latency and detection accuracy under edge compute constraints?
 
 ## Methodology
-We implement a real-time YOLO-based human detection pipeline and benchmark FPS and per-frame latency during live video inference.
+We implement a real-time YOLO-based human detection pipeline and benchmark FPS and per-frame latency. Our suite supports:
+- Multiple input resolutions (640, 416)
+- Model variants (Nano, Small)
+- Precision levels (FP32, FP16)
+- Headless benchmarking via synthetic frame fallback
 
-## Experiments
-- Resolution comparison (640×640 vs 416×416)
-
-## Preliminary Results
-| Resolution | FPS | Avg Latency (ms) | Notes |
-|------------|-----|------------------|-------|
-| 640        | 7.6  | 110.0               | Higher accuracy |
-| 416        | 14.2  | 65.0               | Faster inference |
+## Execution
+To run the full benchmark suite:
+```bash
+export FORCE_SYNTHETIC=true
+python3 experiments/run_all.py
+```
 
 ## Observations
 - Lower input resolution significantly improves inference latency.
-- Accuracy degradation is moderate for human detection tasks.
-
-## Limitations
-- Limited dataset size
-- Approximate accuracy estimation
-- Single-device benchmarking
+- FP16 provides hardware-accelerated speedups on supported devices.
+- YOLOv8n remains the preferred choice for strict edge constraints.
 
 ## Future Work
-- Precision-aware inference (FP16 / INT8)
-- Edge NPU benchmarking
-- Model size comparison
+- Edge NPU-specific optimizations (TensorRT, OpenVINO)
+- Power consumption analysis during inference
+- Quantization (INT8) impact studies
