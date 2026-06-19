@@ -3,3 +3,14 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# YOLO model weights
+*.pt
+
+# Benchmark results and plots
+results/tables/*.csv
+results/plots/*.png
+
+# Ignore summary CSV but keep the directory
+!results/tables/.gitkeep
+!results/plots/.gitkeep
