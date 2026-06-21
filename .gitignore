@@ -3,3 +3,13 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# ML Artifacts
+*.pt
+*.onnx
+
+# Results and Plots
+results/plots/*.png
+results/tables/*.csv
+!results/plots/.gitkeep
+!results/tables/.gitkeep
