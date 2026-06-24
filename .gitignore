@@ -3,3 +3,10 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Model weights
+*.pt
+
+# Results artifacts
+results/tables/*.csv
+results/plots/*.png
