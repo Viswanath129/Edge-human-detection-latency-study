@@ -3,3 +3,10 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Ignore large model weights
+*.pt
+
+# Ignore generated experimental data
+results/tables/*.csv
+results/plots/*.png
