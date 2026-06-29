@@ -3,3 +3,23 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Models
+*.pt
+*.onnx
+*.engine
+
+# Results and Plots
+results/tables/*.csv
+results/plots/*.png
+!results/tables/.gitkeep
+!results/plots/.gitkeep
+
+# Operating System Files
+.DS_Store
+Thumbs.db
