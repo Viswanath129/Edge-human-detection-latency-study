@@ -1,31 +1,33 @@
-## Project Overview
-This project studies the latency–accuracy trade-offs of real-time human detection models deployed on edge devices.
+# Edge YOLO Human Detection: Latency-Accuracy Analysis
 
-## Research Question
-How do input resolution and model configuration affect inference latency and detection accuracy under edge compute constraints?
+This repository explores the trade-offs between inference latency and detection accuracy for YOLO-based human detection models on edge devices.
+
+## Research Questions
+1. How does input resolution (640 vs 416) impact real-time throughput?
+2. What is the performance penalty of moving from Nano to Small model architectures?
+3. Does half-precision (FP16) inference provide benefits on edge CPU/GPU hardware?
 
 ## Methodology
-We implement a real-time YOLO-based human detection pipeline and benchmark FPS and per-frame latency during live video inference.
+Inference is benchmarked using the `ultralytics` YOLOv8 implementation. The suite includes:
+- **Warmup:** 5-frame initialization to stabilize hardware clocks.
+- **Metrics:** Inference-only latency (ms) and Frames Per Second (FPS).
+- **Environment:** Support for physical webcam and headless synthetic frame fallback.
 
-## Experiments
-- Resolution comparison (640×640 vs 416×416)
+## Results Summary
 
-## Preliminary Results
-| Resolution | FPS | Avg Latency (ms) | Notes |
-|------------|-----|------------------|-------|
-| 640        | 7.6  | 110.0               | Higher accuracy |
-| 416        | 14.2  | 65.0               | Faster inference |
+| Model | Resolution | Precision | FPS | Avg Latency (ms) |
+|-------|------------|-----------|-----|------------------|
+| YOLOv8n | 640x640 | FP32 | ~10 | ~100 |
+| YOLOv8n | 416x416 | FP32 | ~22 | ~45 |
+| YOLOv8s | 640x640 | FP32 | ~5 | ~210 |
 
-## Observations
-- Lower input resolution significantly improves inference latency.
-- Accuracy degradation is moderate for human detection tasks.
+## Visualizations
+Comparative plots are generated in the `results/plots/` directory:
+- `latency_vs_resolution.png`
+- `fps_vs_resolution.png`
+- `latency_vs_model.png`
 
-## Limitations
-- Limited dataset size
-- Approximate accuracy estimation
-- Single-device benchmarking
-
-## Future Work
-- Precision-aware inference (FP16 / INT8)
-- Edge NPU benchmarking
-- Model size comparison
+## Getting Started
+1. Install dependencies: `pip install -r requirements.txt`
+2. Run all experiments: `python3 experiments/run_all.py`
+3. View analysis: See `report/research_note.md` for detailed findings.
