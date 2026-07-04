@@ -1,31 +1,37 @@
-## Project Overview
-This project studies the latency–accuracy trade-offs of real-time human detection models deployed on edge devices.
+# Edge Human Detection: Latency–Accuracy Analysis
+
+This repository contains a research project studying the latency–accuracy trade-offs for real-time human detection models on edge devices.
 
 ## Research Question
-How do input resolution and model configuration affect inference latency and detection accuracy under edge compute constraints?
+How do input resolution, model architecture, and precision affect inference latency and throughput under compute constraints?
 
-## Methodology
-We implement a real-time YOLO-based human detection pipeline and benchmark FPS and per-frame latency during live video inference.
+## Project Structure
+- `experiments/`: Benchmarking scripts for resolution, model size, and precision.
+- `results/`: Standardized CSV tables and comparative visualization plots.
+- `report/`: Detailed research note and performance analysis.
 
-## Experiments
-- Resolution comparison (640×640 vs 416×416)
+## Key Performance Results
 
-## Preliminary Results
-| Resolution | FPS | Avg Latency (ms) | Notes |
-|------------|-----|------------------|-------|
-| 640        | 7.6  | 110.0               | Higher accuracy |
-| 416        | 14.2  | 65.0               | Faster inference |
+| Model | Resolution | Precision | FPS | Latency (ms) |
+|-------|------------|-----------|-----|--------------|
+| YOLOv8n | 640x640 | FP32 | 9.9 | 100.6 |
+| YOLOv8n | 416x416 | FP32 | 21.3 | 47.0 |
+| YOLOv8s | 640x640 | FP32 | 4.6 | 217.3 |
+
+## Visualizations
+Generated plots comparing performance across different configurations can be found in `results/plots/`.
+
+## How to Run
+1. Install dependencies: `pip install -r requirements.txt`
+2. Run full suite: `python experiments/run_all.py`
+   - Use `export FORCE_SYNTHETIC=true` if no webcam is available.
 
 ## Observations
-- Lower input resolution significantly improves inference latency.
-- Accuracy degradation is moderate for human detection tasks.
-
-## Limitations
-- Limited dataset size
-- Approximate accuracy estimation
-- Single-device benchmarking
+- **Resolution is the most effective lever:** Switching to 416x416 more than doubled the throughput.
+- **Model Choice:** YOLOv8n is strictly required for real-time targets on CPU.
+- **Hardware Acceleration:** FP16 requires specific hardware (CUDA/NPU) for actual speedup.
 
 ## Future Work
-- Precision-aware inference (FP16 / INT8)
-- Edge NPU benchmarking
-- Model size comparison
+- Edge NPU benchmarking (Coral, OpenVINO)
+- INT8 Quantization evaluation
+- Mean Average Precision (mAP) vs. Latency Pareto curves
