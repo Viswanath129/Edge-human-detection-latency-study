@@ -3,31 +3,56 @@ import matplotlib.pyplot as plt
 import os
 
 # Load the summary data
-df = pd.read_csv('../tables/summary.csv')
+base_dir = os.path.dirname(os.path.abspath(__file__))
+csv_path = os.path.join(base_dir, '../tables/summary.csv')
+
+if not os.path.exists(csv_path):
+    print(f"Error: {csv_path} not found.")
+    exit(1)
+
+df = pd.read_csv(csv_path)
 
 # Create plots directory if it doesn't exist
-os.makedirs('.', exist_ok=True)
+os.makedirs(base_dir, exist_ok=True)
 
-# Plot 1: Average Latency vs Resolution
-plt.figure(figsize=(8, 5))
-plt.bar(df['Resolution'], df['Average_Latency_ms'], color=['salmon', 'lightblue'])
-plt.title('Average Latency vs Input Resolution')
-plt.xlabel('Input Resolution')
-plt.ylabel('Average Latency (ms)')
-for i, v in enumerate(df['Average_Latency_ms']):
-    plt.text(i, v + 2, str(v), ha='center')
-plt.savefig('latency_vs_resolution.png')
-plt.close()
+def save_plot(filename):
+    plt.tight_layout()
+    plt.savefig(os.path.join(base_dir, filename))
+    plt.close()
+    print(f"Saved {filename}")
 
-# Plot 2: Average FPS vs Resolution
-plt.figure(figsize=(8, 5))
-plt.bar(df['Resolution'], df['Average_FPS'], color=['lightgreen', 'orange'])
-plt.title('Average FPS vs Input Resolution')
-plt.xlabel('Input Resolution')
-plt.ylabel('Average FPS (Frames/Sec)')
-for i, v in enumerate(df['Average_FPS']):
-    plt.text(i, v + 0.5, str(v), ha='center')
-plt.savefig('fps_vs_resolution.png')
-plt.close()
+# 1. Latency vs Resolution (for yolov8n, FP32)
+res_df = df[(df['Model'] == 'yolov8n') & (df['Precision'] == 'FP32')].sort_values('Resolution', ascending=False)
+if not res_df.empty:
+    plt.figure(figsize=(8, 5))
+    plt.bar(res_df['Resolution'], res_df['Average_Latency_ms'], color='salmon')
+    plt.title('Inference Latency vs Resolution (yolov8n, FP32)')
+    plt.ylabel('Latency (ms)')
+    save_plot('latency_vs_resolution.png')
 
-print('Plots saved successfully in results/plots')
+# 2. FPS vs Resolution (for yolov8n, FP32)
+if not res_df.empty:
+    plt.figure(figsize=(8, 5))
+    plt.bar(res_df['Resolution'], res_df['Average_FPS'], color='lightgreen')
+    plt.title('FPS vs Resolution (yolov8n, FP32)')
+    plt.ylabel('FPS')
+    save_plot('fps_vs_resolution.png')
+
+# 3. Latency vs Model Size (at 640x640, FP32)
+model_df = df[(df['Resolution'] == '640x640') & (df['Precision'] == 'FP32')].sort_values('Average_Latency_ms')
+if not model_df.empty:
+    plt.figure(figsize=(8, 5))
+    plt.bar(model_df['Model'], model_df['Average_Latency_ms'], color='lightblue')
+    plt.title('Inference Latency vs Model Size (640x640, FP32)')
+    plt.ylabel('Latency (ms)')
+    save_plot('latency_vs_model.png')
+
+# 4. FPS vs Model Size (at 640x640, FP32)
+if not model_df.empty:
+    plt.figure(figsize=(8, 5))
+    plt.bar(model_df['Model'], model_df['Average_FPS'], color='orange')
+    plt.title('FPS vs Model Size (640x640, FP32)')
+    plt.ylabel('FPS')
+    save_plot('fps_vs_model.png')
+
+print('Plotting completed.')
