@@ -3,3 +3,10 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Research Artifacts
+results/tables/*.csv
+results/plots/*.png
+*.pt
+!results/tables/.gitkeep
+!results/plots/.gitkeep

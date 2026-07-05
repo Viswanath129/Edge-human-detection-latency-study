@@ -1,31 +1,43 @@
-## Project Overview
-This project studies the latency–accuracy trade-offs of real-time human detection models deployed on edge devices.
+# YOLO Edge Performance Analysis
+
+This repository contains a research suite for studying latency-accuracy trade-offs for YOLO-based human detection on edge devices.
 
 ## Research Question
-How do input resolution and model configuration affect inference latency and detection accuracy under edge compute constraints?
+How do input resolution, model architecture, and precision affect inference latency and throughput under compute constraints?
 
-## Methodology
-We implement a real-time YOLO-based human detection pipeline and benchmark FPS and per-frame latency during live video inference.
+## Experimental Results
 
-## Experiments
-- Resolution comparison (640×640 vs 416×416)
+| Resolution | Model | Precision | FPS | Avg Latency (ms) | Notes |
+|------------|-------|-----------|-----|------------------|-------|
+| 640x640    | Nano  | FP32      | 8.40| 119.10           | Standard baseline |
+| 416x416    | Nano  | FP32      | 19.56| 51.12            | Optimized for speed |
+| 640x640    | Small | FP32      | 3.94| 253.53           | Higher capacity |
 
-## Preliminary Results
-| Resolution | FPS | Avg Latency (ms) | Notes |
-|------------|-----|------------------|-------|
-| 640        | 7.6  | 110.0               | Higher accuracy |
-| 416        | 14.2  | 65.0               | Faster inference |
+## Key Observations
+- **Resolution**: Lowering resolution to 416x416 nearly doubles the FPS on CPU.
+- **Model Size**: The Small variant is ~2x slower than the Nano variant at the same resolution.
+- **Hardware**: For real-time performance on CPU, Nano at 416px is the recommended configuration.
 
-## Observations
-- Lower input resolution significantly improves inference latency.
-- Accuracy degradation is moderate for human detection tasks.
+## Project Structure
+- `experiments/`: Benchmarking scripts (resolution, model size, precision).
+- `results/`: CSV tables and comparative plots.
+- `report/`: Detailed research notes and analysis.
 
-## Limitations
-- Limited dataset size
-- Approximate accuracy estimation
-- Single-device benchmarking
+## Usage
+
+### Prerequisites
+```bash
+pip install -r requirements.txt
+```
+
+### Run Benchmarks
+To run the full suite and generate plots:
+```bash
+python3 experiments/run_all.py
+```
+*Note: Set `FORCE_SYNTHETIC=true` for headless environments.*
 
 ## Future Work
-- Precision-aware inference (FP16 / INT8)
-- Edge NPU benchmarking
-- Model size comparison
+- INT8 Quantization benchmarks.
+- Evaluation on dedicated Edge NPUs (Coral, Jetson).
+- Object-specific accuracy vs. resolution trade-off curves.
