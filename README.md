@@ -1,31 +1,33 @@
-## Project Overview
-This project studies the latency–accuracy trade-offs of real-time human detection models deployed on edge devices.
+# YOLO Edge Benchmarking
 
-## Research Question
-How do input resolution and model configuration affect inference latency and detection accuracy under edge compute constraints?
+This repository explores the latency–accuracy trade-offs for YOLO-based human detection on edge devices.
 
-## Methodology
-We implement a real-time YOLO-based human detection pipeline and benchmark FPS and per-frame latency during live video inference.
+## Quick Start
+
+### Installation
+```bash
+pip install -r requirements.txt
+```
+
+### Running Benchmarks
+To run the full suite of experiments (resolution, model size, and precision):
+```bash
+python3 experiments/run_all.py
+```
+*Note: Use `export FORCE_SYNTHETIC=true` if running in a headless environment without a webcam.*
 
 ## Experiments
-- Resolution comparison (640×640 vs 416×416)
+- **Resolution**: 640x640 vs 416x416.
+- **Model Size**: Nano (yolov8n) vs Small (yolov8s).
+- **Precision**: FP32 vs FP16 (requires CUDA).
 
-## Preliminary Results
-| Resolution | FPS | Avg Latency (ms) | Notes |
-|------------|-----|------------------|-------|
-| 640        | 7.6  | 110.0               | Higher accuracy |
-| 416        | 14.2  | 65.0               | Faster inference |
+## Results Summary
+Current results are stored in `results/tables/summary.csv` and visualized in `results/plots/`.
 
-## Observations
-- Lower input resolution significantly improves inference latency.
-- Accuracy degradation is moderate for human detection tasks.
+| Resolution | Model | Precision | FPS | Latency (ms) |
+|------------|-------|-----------|-----|--------------|
+| 640x640    | YOLOv8n | FP32      | 9.8 | 102.0        |
+| 416x416    | YOLOv8n | FP32      | 21.6 | 46.3         |
+| 640x640    | YOLOv8s | FP32      | 4.3 | 231.7        |
 
-## Limitations
-- Limited dataset size
-- Approximate accuracy estimation
-- Single-device benchmarking
-
-## Future Work
-- Precision-aware inference (FP16 / INT8)
-- Edge NPU benchmarking
-- Model size comparison
+For detailed analysis, see [Research Note](report/research_note.md).
