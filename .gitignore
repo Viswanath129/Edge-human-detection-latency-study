@@ -3,3 +3,12 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Model Weights
+*.pt
+*.onnx
+*.engine
+
+# Benchmark Results
+results/tables/*.csv
+results/plots/*.png
