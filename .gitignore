@@ -3,3 +3,12 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# YOLO weights
+*.pt
+*.onnx
+*.engine
+
+# Results
+results/tables/*.csv
+results/plots/*.png
