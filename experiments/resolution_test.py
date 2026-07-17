@@ -1,60 +1,46 @@
-import cv2
-import time
-import pandas as pd
-from ultralytics import YOLO
+import os
+import sys
 
-# Load model
-model = YOLO("yolov8n.pt")  # nano = fast (good for edge)
+# Ensure local imports are resolvable
+script_dir = os.path.dirname(os.path.abspath(__file__))
+if script_dir not in sys.path:
+    sys.path.append(script_dir)
 
-# Open webcam
-cap = cv2.VideoCapture(0)
+from utils import benchmark_model, save_summary
 
-latencies = []
-frame_count = 0
-start_time = time.time()
+def main():
+    print("Starting Resolution Comparison Experiments...")
 
-INPUT_SIZE = 640  # change later to 416
+    model_name = "yolov8n.pt"
+    precision = "FP32"
 
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
+    # 1. Benchmark 640x640 resolution
+    print("\n--- Benchmarking 640x640 input resolution ---")
+    avg_latency_640, fps_640, _ = benchmark_model(model_name, resolution=640, precision=precision)
+    print(f"640x640 results -> Latency: {avg_latency_640:.2f} ms, FPS: {fps_640:.2f}")
+    save_summary(
+        resolution_int_or_str=640,
+        model_name=model_name,
+        precision=precision,
+        avg_fps=fps_640,
+        avg_latency_ms=avg_latency_640,
+        observation="Higher detection quality"
+    )
 
-    t0 = time.time()
+    # 2. Benchmark 416x416 resolution
+    print("\n--- Benchmarking 416x416 input resolution ---")
+    avg_latency_416, fps_416, _ = benchmark_model(model_name, resolution=416, precision=precision)
+    print(f"416x416 results -> Latency: {avg_latency_416:.2f} ms, FPS: {fps_416:.2f}")
+    save_summary(
+        resolution_int_or_str=416,
+        model_name=model_name,
+        precision=precision,
+        avg_fps=fps_416,
+        avg_latency_ms=avg_latency_416,
+        observation="Faster Inference"
+    )
 
-    # Resize frame
-    frame_resized = cv2.resize(frame, (INPUT_SIZE, INPUT_SIZE))
+    print("\nResolution Comparison Experiments Completed Successfully!")
 
-    # Run inference
-    results = model(frame_resized, conf=0.4, iou=0.5, verbose=False)
-
-    t1 = time.time()
-    latency = (t1 - t0) * 1000  # ms
-    latencies.append(latency)
-
-    frame_count += 1
-
-    # Display (optional)
-    annotated = results[0].plot()
-    cv2.imshow("Human Detection", annotated)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
-
-end_time = time.time()
-
-# Metrics
-avg_latency = sum(latencies) / len(latencies)
-fps = frame_count / (end_time - start_time)
-
-print(f"Avg Latency: {avg_latency:.2f} ms")
-print(f"FPS: {fps:.2f}")
-
-# Save results
-df = pd.DataFrame({
-    "latency_ms": latencies
-})
-df.to_csv("results/tables/resolution_{}_results.csv".format(INPUT_SIZE), index=False)
+if __name__ == "__main__":
+    main()
