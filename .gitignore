@@ -3,3 +3,14 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Ignore models & weights
+*.pt
+*.onnx
+*.engine
+
+# Ignore benchmark generated artifacts
+results/tables/*.csv
+results/plots/*.png
+!results/tables/.gitkeep
+!results/plots/.gitkeep
