@@ -1,3 +1,4 @@
-Resolution,Average_FPS,Average_Latency_ms,Observation
-640x640,7.6,110.0,Higher detection quality
-416x416,14.2,65.0,Faster Inference
+Resolution,Model,Precision,Average_FPS,Average_Latency_ms,Observation
+640x640,YOLOv8n,FP32,10.0,99.8,Nano Model - Ultra lightweight
+416x416,YOLOv8n,FP32,20.9,47.9,Faster Inference
+640x640,YOLOv8s,FP32,4.1,241.0,Small Model - Improved accuracy trade-off
