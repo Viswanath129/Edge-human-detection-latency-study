@@ -1,5 +1,15 @@
+# Prerequisites
 venv/
 __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Model Weights (avoid uploading huge binaries)
+*.pt
+*.onnx
+*.engine
+
+# Result Artifacts (CSV tables and PNG plots should be regenerated locally)
+results/tables/*.csv
+results/plots/*.png
