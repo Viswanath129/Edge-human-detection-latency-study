@@ -1,60 +1,23 @@
-import cv2
-import time
-import pandas as pd
-from ultralytics import YOLO
+import os
+import sys
 
-# Load model
-model = YOLO("yolov8n.pt")  # nano = fast (good for edge)
+# Insert containing directory into sys.path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# Open webcam
-cap = cv2.VideoCapture(0)
+from utils import benchmark_model, save_summary
 
-latencies = []
-frame_count = 0
-start_time = time.time()
+def run_resolution_test():
+    print("Running Resolution Test (640x640 vs 416x416)...")
 
-INPUT_SIZE = 640  # change later to 416
+    # 640x640
+    avg_latency_640, fps_640, _ = benchmark_model("yolov8n.pt", 640, "FP32")
+    save_summary(640, "yolov8n.pt", "FP32", fps_640, avg_latency_640, "Higher detection quality")
 
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
+    # 416x416
+    avg_latency_416, fps_416, _ = benchmark_model("yolov8n.pt", 416, "FP32")
+    save_summary(416, "yolov8n.pt", "FP32", fps_416, avg_latency_416, "Faster Inference")
 
-    t0 = time.time()
+    print("Resolution Test Complete.")
 
-    # Resize frame
-    frame_resized = cv2.resize(frame, (INPUT_SIZE, INPUT_SIZE))
-
-    # Run inference
-    results = model(frame_resized, conf=0.4, iou=0.5, verbose=False)
-
-    t1 = time.time()
-    latency = (t1 - t0) * 1000  # ms
-    latencies.append(latency)
-
-    frame_count += 1
-
-    # Display (optional)
-    annotated = results[0].plot()
-    cv2.imshow("Human Detection", annotated)
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
-
-end_time = time.time()
-
-# Metrics
-avg_latency = sum(latencies) / len(latencies)
-fps = frame_count / (end_time - start_time)
-
-print(f"Avg Latency: {avg_latency:.2f} ms")
-print(f"FPS: {fps:.2f}")
-
-# Save results
-df = pd.DataFrame({
-    "latency_ms": latencies
-})
-df.to_csv("results/tables/resolution_{}_results.csv".format(INPUT_SIZE), index=False)
+if __name__ == '__main__':
+    run_resolution_test()
