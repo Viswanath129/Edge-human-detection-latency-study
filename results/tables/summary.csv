@@ -1,3 +1,4 @@
-Resolution,Average_FPS,Average_Latency_ms,Observation
-640x640,7.6,110.0,Higher detection quality
-416x416,14.2,65.0,Faster Inference
+Resolution,Model,Precision,Average_FPS,Average_Latency_ms,Observation
+640x640,YOLOv8n,FP32,7.503659174779321,133.26831305999576,Higher detection quality
+416x416,YOLOv8n,FP32,20.67973087543886,48.35652871999855,Faster Inference
+640x640,YOLOv8s,FP32,4.53868870981677,220.32795459999076,Larger capacity model
