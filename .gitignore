@@ -3,3 +3,12 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Ignore deep learning model weights
+*.pt
+*.onnx
+*.engine
+
+# Ignore benchmark result artifacts
+results/tables/*.csv
+results/plots/*.png
