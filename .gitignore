@@ -3,3 +3,12 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Ignore weights
+*.pt
+*.onnx
+*.engine
+
+# Ignore benchmark output data and plots
+results/tables/*.csv
+results/plots/*.png
