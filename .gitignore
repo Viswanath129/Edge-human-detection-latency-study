@@ -3,3 +3,14 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Ignore PyTorch weights and other binary weights
+*.pt
+*.onnx
+*.engine
+
+# Ignore benchmark outputs
+results/tables/*.csv
+!results/tables/.gitkeep
+results/plots/*.png
+!results/plots/.gitkeep
