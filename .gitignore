@@ -3,3 +3,16 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Model weights and binaries
+*.pt
+*.onnx
+*.engine
+
+# Result artifacts
+results/tables/*.csv
+results/plots/*.png
+
+# Keep directory structure
+!results/tables/.gitkeep
+!results/plots/.gitkeep
