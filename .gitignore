@@ -3,3 +3,12 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Deep learning weights and models
+*.pt
+*.onnx
+*.engine
+
+# Result artifacts (excluding .gitkeep if any)
+results/tables/*.csv
+results/plots/*.png
