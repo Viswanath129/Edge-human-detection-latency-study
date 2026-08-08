@@ -3,3 +3,12 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+
+# Deep learning weights and exports
+*.pt
+*.onnx
+*.engine
+
+# Benchmarking results (plots and tables)
+results/tables/*.csv
+results/plots/*.png
