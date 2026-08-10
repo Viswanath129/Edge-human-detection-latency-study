@@ -1,3 +1,5 @@
-Resolution,Average_FPS,Average_Latency_ms,Observation
-640x640,7.6,110.0,Higher detection quality
-416x416,14.2,65.0,Faster Inference
+Resolution,Model,Precision,Average_FPS,Average_Latency_ms,Observation
+640x640,YOLOv8n,FP32,8.24,121.29,Lightweight nano model
+416x416,YOLOv8n,FP32,19.52,51.22,Faster Inference
+640x640,YOLOv8s,FP32,3.58,279.35,Standard small model
+640x640,YOLOv8m,FP32,1.67,598.98,Medium capacity model
